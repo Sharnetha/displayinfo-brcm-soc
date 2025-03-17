@@ -25,8 +25,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "../../Module.h"
-#include "UtilsLogging.h"
+#include <linux/module.h>
 
 #define GRAPHICS_RESOLUTION_LOC 4
 #define WIDTH 0
@@ -35,7 +34,6 @@
 #define PROC_BRCM_DISPLAY_PATH "/proc/brcm/display"
 
 using namespace std;
-using namespace WPEFramework;
 
 /**
  * Sanitizeline
@@ -113,7 +111,7 @@ string parse_proc_brcm_core(string columnHeader)
         }
         procfile.close();
     }
-    else LOGERR("could not open file %s", PROC_BRCM_CORE_PATH);
+    else cout << "could not open file " << PROC_BRCM_CORE_PATH << endl;
     return value;
 }
 
@@ -143,7 +141,7 @@ string parse_proc_brcm_display()
         }
         procfile.close();
     }
-    else LOGERR("could not open file %s", PROC_BRCM_DISPLAY_PATH);
+    else cout << "could not open file " << PROC_BRCM_DISPLAY_PATH << endl;
     return value;
 }
 
@@ -154,11 +152,11 @@ uint64_t SoC_GetTotalGpuRam()
     try
     {
         ret = stoi(value) * 1024 * 1024;
-        LOGINFO("total GPU ram returned from proc = %s MB", value.c_str());
+        cout << "total GPU ram returned from proc = " << value << " MB" << endl;
     }
     catch(...)
     {
-        LOGERR("Unable to process Total Gpu ram");
+        cout << "Unable to process Total Gpu ram" << endl;
     }
     return ret;
 }
@@ -171,11 +169,11 @@ uint64_t SoC_GetFreeGpuRam()
     try
     {
         usedPercentage = stoi(value);
-        LOGINFO("percentage of GPU memory used = %s", value.c_str());
+        cout << "percentage of GPU memory used = " << value << endl;
     }
     catch(...)
     {
-        LOGERR("Unable to process Free Gpu ram");
+        cout << "Unable to process Free Gpu ram" << endl;
     }
 
     ret = (100 - usedPercentage) * 0.01 * SoC_GetTotalGpuRam();
@@ -187,18 +185,18 @@ uint32_t SoC_GetGraphicsWidth()
     vector<string> resolution;
     uint32_t ret = 0;
     string value = parse_proc_brcm_display();
-    LOGINFO("graphics plane dimensions returned from proc = %s" , value.c_str());
+    cout << "graphics plane dimensions returned from proc = " << value << endl;
     tokenize(value, resolution, 'x'); // graphics resolution is in the format 1280x720
     if(resolution.size() > WIDTH)
     {
         try
         {
             ret = stoi(resolution.at(WIDTH));
-            LOGINFO("graphics plane width = %d", ret);
+            cout << "graphics plane width = " << ret << endl;
         }
         catch(...)
         {
-            LOGERR("Unable to process gfx plane width");
+            cout << "Unable to process gfx plane width" << endl;
         }
     }
 
@@ -210,18 +208,18 @@ uint32_t SoC_GetGraphicsHeight()
     vector<string> resolution;
     uint32_t ret = 0;
     string value = parse_proc_brcm_display();
-    LOGINFO("graphics plane dimensions returned from proc = %s" , value.c_str());
+    cout << "graphics plane dimensions returned from proc = " << value << endl;
     tokenize(value, resolution, 'x'); // graphics resolution is in the format 1280x720
     if(resolution.size() > HEIGHT)
     {
         try
         {
             ret = stoi(resolution.at(HEIGHT));
-            LOGINFO("graphics plane height = %d", ret);
+            cout << "graphics plane height = " << ret << endl;
         }
         catch(...)
         {
-            LOGERR("Unable to process gfx plane height");
+            cout << "Unable to process gfx plane height" << endl;
         }
     }
     return ret;
